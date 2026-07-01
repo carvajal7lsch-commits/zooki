@@ -1,0 +1,121 @@
+# Configuración con credenciales
+config/Database.php.local
+config/config.php.local
+config/EmailService.php.local
+*.env
+*.env.local
+
+# Dependencias de Composer
+/vendor/
+composer.lock
+
+# Archivos subidos por usuarios
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Archivos temporales y de caché
+/tmp/
+/temp/
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Archivos de sesión PHP
+/sessions/
+*.sess
+
+# Archivos de IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de backup
+*.bak
+*.backup
+*~
+*.old
+
+# Archivos de logs de errores
+error.log
+error_log
+*.error.log
+
+# Archivos de optimización
+optimize_db.php
+
+# Scripts de debug
+scratch/
+
+# Archivos de documentación generados
+/docs/api/
+
+# Archivos de compilación
+*.min.js.map
+*.min.css.map
+
+# Archivos de prueba
+test/
+tests/
+*.test.php
+*.spec.php
+
+# Archivos de base de datos locales
+*.sql.local
+database/*.local.sql
+
+# Archivos de configuración de servidor
+.htaccess.local
+nginx.conf.local
+apache.conf.local
+
+# Archivos de sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archivos de Composer
+composer.phar
+composer.lock
+
+# Archivos de PHP
+*.php~
+*.php.bak
+*.php.orig
+
+# Archivos de Node (si se usa)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Archivos de Webpack (si se usa)
+webpack.config.js.local
+webpack-stats.json
+
+# Archivos de Laravel (si se usa)
+/storage/*.key
+/storage/*.log
+/public/hot
+/public/storage
+/storage/*.sqlite
+
+# Archivos específicos del proyecto que no se suben
+ZOOKI_REGLAS.md
+temp_login.php
+backlog-zooki.md
+ERS.md
+FichaTecnica_Zooki.md

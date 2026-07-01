@@ -1,0 +1,304 @@
+/* Pill Sidebar - Navbar Vertical Flotante */
+.pill-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 90px;
+    background: white;
+    border-radius: 0 40px 40px 0; /* Estilo de gota pegado a la izquierda */
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.pill-sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    pointer-events: none;
+}
+
+.pill-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.pill-logo-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-soft);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.4rem;
+    transition: all 0.3s ease;
+}
+
+.pill-logo:hover .pill-logo-icon {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.pill-logo-text {
+    color: var(--text-main);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.pill-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    width: 100%;
+}
+
+.pill-nav-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    margin: 0 auto;
+}
+
+.pill-nav-item:hover {
+    color: var(--primary);
+    background: #f1f5f9;
+    transform: scale(1.05);
+}
+
+.pill-nav-item.active {
+    background: var(--primary); /* Azul sólido para la gota activa */
+    color: white;
+    border-radius: 26px 0 0 26px; /* Bordes izquierdos redondeados en la pestaña */
+    align-self: flex-end; /* Se alinea al borde derecho */
+    width: calc(100% - 1rem); /* Deja margen a la izquierda, toca la derecha */
+    margin-right: 0;
+    padding-right: 16px; /* Centra el ícono alineándolo con los demás */
+    transform: none;
+    z-index: 2;
+    box-shadow: none;
+}
+
+/* Esquinas cóncavas con degradado azul para conectar la gota con el borde derecho del sidebar */
+.pill-nav-item.active::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    background: radial-gradient(circle at 0% 0%, transparent 23.5px, var(--primary) 24.5px);
+    pointer-events: none;
+    z-index: 3;
+}
+
+.pill-nav-item.active::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    background: radial-gradient(circle at 0% 100%, transparent 23.5px, var(--primary) 24.5px);
+    pointer-events: none;
+    z-index: 3;
+}
+
+.pill-divider {
+    width: 40px;
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0.5rem 0;
+}
+
+.pill-logout {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fef2f2;
+    color: #ef4444;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: 0.75rem;
+}
+
+.pill-logout:hover {
+    color: white;
+    background: #ef4444;
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .pill-sidebar {
+        left: 10px;
+        width: 80px;
+        padding: 1.5rem 0;
+    }
+
+    .pill-logo-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
+
+    .pill-logo-text {
+        font-size: 0.7rem;
+    }
+
+    .pill-nav-item {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+
+    .pill-logout {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .pill-nav-item.active {
+        width: calc(100% + 1.25rem);
+        margin-right: -1.25rem;
+        border-radius: 24px 0 0 24px;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .pill-sidebar {
+        left: 50%;
+        top: auto;
+        bottom: 20px;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        max-width: 400px;
+        height: 70px;
+        flex-direction: row;
+        padding: 0 1.5rem;
+        border-radius: 35px;
+        gap: 0.75rem;
+    }
+
+    .pill-sidebar::before {
+        background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+    }
+
+    .pill-logo {
+        flex-direction: row;
+        gap: 0.5rem;
+        margin-bottom: 0;
+    }
+
+    .pill-logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .pill-logo-text {
+        font-size: 0.8rem;
+    }
+
+    .pill-nav {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .pill-nav-item {
+        width: 48px;
+        height: 48px;
+    }
+
+    .pill-nav-item.active {
+        transform: translateY(-4px);
+        border-radius: 50%;
+        align-self: center;
+        width: 48px;
+        margin-right: 0;
+        padding-right: 0;
+    }
+
+    .pill-nav-item.active::before {
+        display: none;
+    }
+
+    .pill-nav-item.active::after {
+        display: block;
+        right: auto;
+        bottom: -4px;
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 4px;
+        background: white;
+        border-radius: 2px;
+    }
+
+    .pill-divider {
+        display: none;
+    }
+
+    .pill-logout {
+        margin-top: 0;
+    }
+}
+
+/* Hide original sidebar when pill sidebar is active */
+.dashboard-layout {
+    padding-left: 90px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-layout {
+        padding-left: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-layout {
+        padding-left: 0;
+        padding-bottom: 110px;
+    }
+
+    .sidebar {
+        display: none !important;
+    }
+}

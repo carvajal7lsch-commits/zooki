@@ -1,0 +1,1280 @@
+:root {
+    /* Zooki Palette */
+    --primary: #0052FF;
+    --primary-hover: #0044d6;
+    --primary-soft: rgba(0, 82, 255, 0.1);
+
+    --bg-main: #E9ECF5;
+    --bg-surface: #FFFFFF;
+    --input-bg: #F8FAFF;
+
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+
+    --border-color: #E5E7EB;
+
+    --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+
+    --radius-xl: 20px;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+
+    --secondary: #10B981;
+    --secondary-hover: #059669;
+    --secondary-soft: rgba(16, 185, 129, 0.1);
+
+    --warning: #F59E0B;
+    --warning-soft: rgba(245, 158, 11, 0.1);
+
+    --danger: #EF4444;
+    --danger-soft: rgba(239, 68, 68, 0.1);
+
+    /* Role Colors */
+    --role-admin: #0052FF;
+    --role-vet: #0044d6;
+    --role-receptionist: #5560FF;
+
+    /* Bento grid accent (para collage) */
+    --bento-primary: #3B82F6;
+    --bento-light: #DBEAFE;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+body.login-page {
+    padding: 0;
+}
+
+/* ============================================
+   LAYOUT PRINCIPAL: Formulario (izq) | Hero (der)
+   Igual a la referencia "Vet da Cidade"
+   ============================================ */
+.login-container {
+    display: flex;
+    flex-direction: row-reverse;
+    /* Form RIGHT — Hero LEFT */
+    width: 100%;
+    height: 100vh;
+    background-color: var(--bg-surface);
+    overflow: hidden;
+}
+
+/* ── Lado del Formulario (IZQUIERDO) ── */
+.login-form-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* alinear al centro */
+    padding: 2rem;
+    background-color: var(--bg-surface);
+    position: relative;
+    overflow-y: auto;
+}
+
+/* ── Branding / Logo superior izquierdo ── */
+.login-brand {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 10;
+    margin-bottom: 2.5rem;
+}
+
+.login-brand-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.login-brand-name {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+/* ============================================
+   FLIP ANIMATION (3D)
+   ============================================ */
+.flip-container {
+    perspective: 1500px;
+    width: 100%;
+    width: 100%;
+    max-width: 440px;
+    /* Ancho máximo para el formulario */
+}
+
+.flipper {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    width: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.flipper.flipped {
+    transform: rotateY(180deg);
+}
+
+.front,
+.back {
+    grid-area: 1 / 1;
+    backface-visibility: hidden;
+    width: 100%;
+}
+
+.front {
+    transform: rotateY(0deg);
+    z-index: 2;
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+/* ============================================
+   CLASES AUXILIARES FORMULARIO REGISTRO
+   ============================================ */
+.auth-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-grid .input-group {
+    margin-bottom: 0;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+/* ============================================
+   BRAND LOGO & COPYRIGHT
+   ============================================ */
+
+.brand-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.brand-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+/* ── Copyright inferior izquierdo ── */
+.login-copyright {
+    margin-top: 1rem;
+    align-self: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ── Form wrapper ── */
+.flip-container {
+    margin: auto 0;
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-wrapper {
+    width: 100%;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.2rem;
+}
+
+.btn-back-top {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.3s;
+}
+
+.btn-back-top i {
+    font-size: 1.2rem;
+}
+
+.btn-back-top:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: var(--primary-soft);
+}
+
+.form-wrapper h2 {
+    font-size: 1.6rem;
+    color: var(--text-primary);
+    text-align: left;
+    font-weight: 800;
+    margin-bottom: 0;
+}
+
+.form-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+/* Alerta de Error */
+.alert-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #FEF2F2;
+    color: #DC2626;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #DC2626;
+    font-size: 0.9rem;
+}
+
+.alert-error i {
+    font-size: 1.25rem;
+}
+
+/* Radial decorations (body pseudo-elements) */
+body::before {
+    content: '';
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(85, 96, 255, 0.12) 0%, rgba(85, 96, 255, 0) 70%);
+    filter: blur(40px);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0) 70%);
+    filter: blur(50px);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ── Input Groups ── */
+.input-group {
+    margin-bottom: 0.75rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+    text-align: left;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper>i {
+    display: none;
+    /* Ocultar los iconos de la izquierda para igualar a la referencia */
+}
+
+.input-wrapper input,
+.input-wrapper select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: #FFFFFF;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    display: block;
+    box-sizing: border-box;
+}
+
+.input-wrapper input::placeholder {
+    color: #9CA3AF;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
+/* ── Validation Messages & Password Meter ── */
+.validation-msg {
+    display: block;
+    font-size: 0.75rem;
+    margin-top: 0.3rem;
+    color: var(--text-secondary);
+    min-height: 1.1rem;
+}
+
+.validation-msg:empty {
+    display: none;
+}
+
+.validation-msg.error {
+    color: var(--danger);
+}
+
+.validation-msg.success {
+    color: var(--secondary);
+}
+
+.password-meter-container {
+    width: 100%;
+    height: 4px;
+    background-color: #E5E7EB;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.password-meter {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.password-meter.weak {
+    width: 33%;
+    background-color: var(--danger);
+}
+
+.password-meter.medium {
+    width: 66%;
+    background-color: var(--warning);
+}
+
+.password-meter.strong {
+    width: 100%;
+    background-color: var(--secondary);
+}
+
+.input-wrapper input[type="password"] {
+    padding-right: 3rem;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    transition: color 0.2s ease;
+    z-index: 10;
+}
+
+.toggle-password:hover {
+    color: var(--primary);
+}
+
+/* ── Form Options (Remember / Forgot) ── */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 500;
+    user-select: none;
+}
+
+.remember-me input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: var(--input-bg);
+}
+
+.remember-me input[type="checkbox"]:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.remember-me input[type="checkbox"]:checked::after {
+    content: '\2713';
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.remember-me:hover input[type="checkbox"] {
+    border-color: var(--primary);
+}
+
+.forgot-password {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.forgot-password:hover {
+    color: var(--primary-hover);
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+/* ── Botones ── */
+.btn-primary {
+    width: 100%;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 82, 255, 0.15);
+}
+
+.btn-primary:disabled {
+    background-color: var(--border-color);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 82, 255, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.85rem;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.btn-secondary:hover {
+    background-color: var(--input-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* Icono de Google dentro del botón */
+.google-icon {
+    color: #DB4437;
+    font-size: 1.2rem;
+}
+
+/* ── Footer del form ── */
+.form-footer {
+    margin-top: 2.5rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.form-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   HERO / BENTO GRID (IZQUIERDO)
+   Llena TODO el panel de borde a borde
+   ============================================ */
+.login-hero {
+    display: none;
+    position: relative;
+    background-color: #FFFFFF;
+    overflow: visible;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.75rem;
+    /* padding sutil */
+    box-sizing: border-box;
+}
+
+.hero-grid-collage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0;
+    height: 100%;
+    aspect-ratio: 3.5 / 4;
+    margin: auto;
+}
+
+.collage-item {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Paleta Bento adaptada a Zooki (azul) ── */
+.bg-primary-dark {
+    background-color: var(--bento-primary);
+}
+
+.bg-primary-light {
+    background-color: var(--bento-light);
+}
+
+/* Mantener legacy por si hay otros usos */
+.bg-dark-blue {
+    background-color: var(--bento-primary);
+}
+.bg-light-blue {
+    background-color: var(--bento-light);
+}
+
+.bg-medium-blue {
+    background-color: #93C5FD;
+}
+
+.bg-white {
+    background-color: #FFFFFF;
+}
+
+.bg-transparent {
+    background-color: transparent;
+}
+
+/* ============================================
+/* ============================================
+   FORMAS CURVAS (50% para formas orgánicas)
+   ============================================ */
+.br-tr {
+    border-radius: 0 50% 0 0;
+}
+
+.br-bl {
+    border-radius: 0 0 0 50%;
+}
+
+.br-tl {
+    border-radius: 50% 0 0 0;
+}
+
+.br-br {
+    border-radius: 0 0 50% 0;
+}
+
+.br-pill-left {
+    border-radius: 50% 0 0 50%;
+}
+
+.br-pill-right {
+    border-radius: 0 50% 50% 0;
+}
+
+.br-pill-top {
+    border-radius: 50% 50% 0 0;
+}
+
+.br-pill-bottom {
+    border-radius: 0 0 50% 50%;
+}
+
+.br-blob {
+    border-radius: 0 50% 0 50%;
+}
+
+.br-leaf {
+    border-radius: 50% 0 50% 0;
+}
+
+.br-circle {
+    border-radius: 50%;
+}
+
+/* Cruz médica SVG */
+.cross-icon {
+    width: 40%;
+    height: 40%;
+}
+
+/* Fotos recortadas de mascotas */
+.collage-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.collage-item:hover img {
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
+}
+
+/* ── Responsive: desktop muestra el hero ── */
+@media (min-width: 1024px) {
+    .login-hero {
+        display: flex;
+        flex: 1.2;
+    }
+
+    .login-form-area {
+        flex: 1;
+    }
+}
+
+/* ── Responsive: mobile ajustes del form ── */
+@media (max-width: 1023px) {
+    .login-form-area {
+        align-items: center;
+        padding: 2rem 1.5rem;
+    }
+
+    .login-brand {
+        position: static;
+        margin-bottom: 2rem;
+    }
+
+    .login-copyright {
+        position: static;
+        margin-top: 2rem;
+        text-align: center;
+    }
+}
+
+/* Scaling Bento Grid collage on larger screens */
+@media (min-width: 1280px) {
+
+    .collage-item.item-header h1 {
+        font-size: 3.25rem;
+    }
+
+    .collage-item.item-header .hero-tagline {
+        font-size: 1.25rem;
+    }
+
+    .collage-item.item-stats-1 {
+        padding: 1.5rem;
+    }
+
+    .collage-item.item-stats-1 .stat-value {
+        font-size: 1.35rem;
+    }
+
+    .collage-item.item-stats-2 {
+        padding: 1.5rem;
+        gap: 0.5rem;
+    }
+
+    .collage-item.item-stats-2 .rating-stars {
+        font-size: 1rem;
+    }
+
+    .collage-item.item-stats-2 .rating-label {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 1600px) {
+
+    .collage-item.item-header h1 {
+        font-size: 3.75rem;
+    }
+
+    .collage-item.item-header .hero-tagline {
+        font-size: 1.4rem;
+    }
+
+    .collage-item.item-stats-1 {
+        padding: 1.75rem;
+    }
+
+    .collage-item.item-stats-1 .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .collage-item.item-stats-2 {
+        padding: 1.75rem;
+        gap: 0.6rem;
+    }
+
+    .collage-item.item-stats-2 .rating-stars {
+        font-size: 1.15rem;
+    }
+
+    .collage-item.item-stats-2 .rating-label {
+        font-size: 0.95rem;
+    }
+}
+
+/* ============================================
+   ANIMACIÓN SPIN (para spinners)
+   ============================================ */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   MODAL RESET PASSWORD
+   Antes estaba inline en login.php, ahora
+   vive aquí según ZOOKI_REGLAS.md
+   ============================================ */
+.modal-open {
+    overflow: hidden;
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(9, 10, 32, 0.55);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    transition: opacity 0.2s ease;
+    opacity: 0;
+    z-index: 1000;
+}
+
+.modal-backdrop[hidden] {
+    display: none;
+}
+
+.modal-backdrop:not(.active) {
+    pointer-events: none;
+}
+
+.modal-backdrop.active {
+    opacity: 1;
+}
+
+.modal-card {
+    position: relative;
+    width: min(420px, 100%);
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem 2.25rem;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.2s ease;
+}
+
+.modal-backdrop.active .modal-card {
+    transform: translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(15, 23, 42, 0.06);
+    color: #1f2937;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.modal-close:hover {
+    background: rgba(15, 23, 42, 0.12);
+}
+
+.modal-illustration {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(0, 82, 255, 0.15), rgba(14, 165, 233, 0.18));
+    color: #2563eb;
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+#resetPasswordModal h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+}
+
+.modal-subtitle {
+    margin-top: 0.75rem;
+    margin-bottom: 1.75rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+#resetRequestForm label {
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+#resetRequestForm .input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid rgba(0, 82, 255, 0.35);
+    border-radius: 16px;
+    padding: 0.85rem 1rem;
+    background: rgba(248, 250, 252, 0.8);
+    margin-bottom: 1.5rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+#resetRequestForm .input-wrapper:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
+#resetRequestForm .input-wrapper>i {
+    display: block;
+    /* Mostrar icono dentro del modal */
+    color: var(--text-secondary);
+}
+
+#resetRequestForm input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 1rem;
+    color: #0f172a;
+}
+
+.modal-hint {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    background: rgba(14, 165, 233, 0.08);
+    color: #0369a1;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+}
+
+.modal-hint i {
+    font-size: 1.2rem;
+}
+
+/* ── Divider & Google Btn ── */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border);
+}
+
+.divider span {
+    padding: 0 1rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.google-btn-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* Auth grid fix for one column mobile */
+@media (max-width: 768px) {
+    .auth-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-card {
+        padding: 2rem 1.75rem;
+    }
+}
+
+/* ============================================
+   Premium Modal Classes (Global)
+   ============================================ */
+.premium-modal {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+    padding: 0 !important;
+}
+
+.premium-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.premium-close-btn {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 !important;
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.2s !important;
+    z-index: 10 !important;
+}
+
+.premium-close-btn:focus {
+    box-shadow: none !important;
+}
+
+.premium-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+}
+
+/* User Profile Header */
+.header-user-wrapper {
+    position: relative;
+}
+
+/* Profile Password Change Modal */
+.pwd-modal-header {
+    background: linear-gradient(135deg, #0052FF 0%, #5560FF 100%);
+    color: white;
+    padding: 2rem 2.5rem;
+    border-radius: 0;
+    text-align: left;
+    position: relative;
+}
+
+.pwd-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.pwd-modal-header p {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.pwd-modal-body {
+    text-align: left;
+    padding: 2.5rem;
+    background: #ffffff;
+}
+
+.pwd-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.pwd-input-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    color: #64748b;
+}
+
+.pwd-input {
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.9rem;
+}
+
+.pwd-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.btn-pwd-cancel {
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-pwd-cancel:hover {
+    background-color: #e2e8f0;
+}
+
+.btn-pwd-confirm {
+    background-color: #0052FF;
+    color: white;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 82, 255, 0.2);
+}
+
+.btn-pwd-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 82, 255, 0.3);
+}
+
+/* === REGLAS DEL MANIFIESTO ZOOKI: ESTILOS PARA IMAGENES DEL BENTO GRID === */
+.collage-img-standard,
+.collage-img-center,
+.collage-img-golden,
+.collage-img-bottom {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+}
+
+.collage-img-center {
+    object-position: center center;
+}
+
+.collage-img-golden {
+    object-position: center 20%;
+}
+
+.collage-img-bottom {
+    object-position: center bottom;
+}
+
+.collage-puppy-wrapper {
+    overflow: visible !important;
+    z-index: 10;
+    position: relative;
+}
+
+.collage-item .collage-puppy-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+    position: absolute;
+    top: 25%;
+    left: 2%;
+    z-index: 10;
+    border-top-right-radius: inherit;
+}
+
+.collage-cat-wrapper {
+    overflow: visible;
+    z-index: 5;
+    position: relative;
+}
+
+.collage-item .collage-cat-img {
+    width: 120%;
+    height: 120%;
+    object-fit: contain;
+    object-position: center bottom;
+    position: absolute;
+    bottom: -5%;
+    left: -7.5%;
+    z-index: 5;
+}
+
+.collage-gray-cat-wrapper {
+    overflow: visible !important;
+    z-index: 6;
+    position: relative;
+}
+
+.collage-item .collage-gray-cat-img {
+    width: 140%;
+    height: 140%;
+    object-fit: contain;
+    object-position: left bottom;
+    position: absolute;
+    bottom: -17%;
+    left: -11%;
+    z-index: 6;
+}
+.collage-golden-wrapper {
+    overflow: visible;
+    z-index: 10;
+    position: relative;
+}
+
+.collage-item .collage-golden-img {
+    width: 120%;
+    height: 120%;
+    object-fit: contain;
+    object-position: center bottom;
+    position: absolute;
+    bottom: 0;
+    left: -10%;
+    z-index: 10;
+}
+
+.google-login-wrapper {
+    margin-top: 1.5rem;
+}
+
+.google-login-btn {
+    width: 100%;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.google-icon {
+    color: #4285F4;
+    font-size: 1.2rem;
+}
+
+/* Prevent image dragging and text selection on brand logo and bento grid images */
+.brand-logo,
+.hero-grid-collage img {
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none; /* Prevents right click, select, drag and highlight */
+}
