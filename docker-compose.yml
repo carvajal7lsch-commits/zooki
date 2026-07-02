@@ -31,16 +31,7 @@ services:
       - ./database:/docker-entrypoint-initdb.d
     restart: always
 
-  # (Opcional) phpMyAdmin para gestionar la base de datos visualmente
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - "8080:80"
-    environment:
-      PMA_HOST: db
-    depends_on:
-      - db
-    restart: always
+
 
 volumes:
   db_data:
