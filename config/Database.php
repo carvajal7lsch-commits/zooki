@@ -2,11 +2,28 @@
 
 class Database {
     // Parámetros de la base de datos
-    private $host = "localhost";
-    private $db_name = "zooki_db";
-    private $username = "root"; // Usuario por defecto en XAMPP
-    private $password = "";     // Contraseña por defecto en XAMPP
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
     public $conn;
+
+    public function __construct() {
+        // Cargar credenciales desde .env si existe
+        $envFile = __DIR__ . '/../.env';
+        if (file_exists($envFile)) {
+            $env = parse_ini_file($envFile);
+            $this->host = $env['DB_HOST'] ?? 'localhost';
+            $this->db_name = $env['DB_NAME'] ?? 'zooki_db';
+            $this->username = $env['DB_USER'] ?? 'root';
+            $this->password = $env['DB_PASS'] ?? '';
+        } else {
+            $this->host = getenv('DB_HOST') ?: 'localhost';
+            $this->db_name = getenv('DB_NAME') ?: 'zooki_db';
+            $this->username = getenv('DB_USER') ?: 'root';
+            $this->password = getenv('DB_PASS') ?: '';
+        }
+    }
 
     // Método para obtener la conexión
     public function getConnection() {
