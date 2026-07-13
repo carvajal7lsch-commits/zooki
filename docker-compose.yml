@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       # Montamos la carpeta local (solo para desarrollo, en prod ya está dentro del container).
       # Si prefieres que funcione 100% con los archivos dentro de la imagen, puedes quitar esta línea:
