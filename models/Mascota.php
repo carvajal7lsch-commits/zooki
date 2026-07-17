@@ -2,7 +2,7 @@
 
 class Mascota {
     private $conn;
-    private $table_name = "Mascotas";
+    private $table_name = "mascotas";
 
     public function __construct($db) {
         $this->conn = $db;
