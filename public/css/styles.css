@@ -159,6 +159,13 @@ body.login-page {
     margin-bottom: 0.5rem;
 }
 
+.form-grid-2-gap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
 .auth-grid .input-group {
     margin-bottom: 0;
 }
@@ -1036,10 +1043,16 @@ body::after {
     margin-top: 0.5rem;
 }
 
-/* Auth grid fix for one column mobile */
-@media (max-width: 768px) {
-    .auth-grid {
-        grid-template-columns: 1fr;
+/* Auth grid fix for one column mobile / tablet */
+@media (max-width: 1023px) {
+    .auth-grid,
+    .form-grid-2-gap {
+        grid-template-columns: 1fr !important;
+    }
+
+    .auth-grid .full-width,
+    .form-grid-2-gap .full-width {
+        grid-column: span 1 !important;
     }
 
     .modal-card {

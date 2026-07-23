@@ -214,6 +214,126 @@ foreach ($mascotas as $m) {
     </div>
 </div>
 
+<!-- ══ SCREEN: AGENDA DE SALUD (AGENDA) ═════════════════════════════ -->
+<div id="screen-agenda" class="app-screen">
+    <div class="section-title-row">
+        <h2>Mi Agenda de Salud</h2>
+    </div>
+    
+    <div class="agenda-card">
+        <!-- Toggles de Agenda -->
+        <div class="agenda-tabs">
+            <button type="button" class="agenda-tab-btn active" id="btn-agenda-citas">
+                <i class="ri-calendar-event-line"></i> Mis Citas
+            </button>
+            <button type="button" class="agenda-tab-btn" id="btn-agenda-salud">
+                <i class="ri-heart-line"></i> Calendario de Salud
+            </button>
+        </div>
+
+        <!-- Contenedor 1: Mis Citas -->
+        <div id="agenda-citas" class="agenda-tab-content active">
+            <?php if (empty($todas_citas)): ?>
+                <div class="agenda-empty-state">
+                    <i class="ri-calendar-line"></i>
+                    <p>No tienes citas agendadas.</p>
+                </div>
+            <?php else: ?>
+                <div class="agenda-list scrollable-list">
+                    <?php foreach ($todas_citas as $c): ?>
+                        <div class="agenda-list-item">
+                            <div class="agenda-pet-photo">
+                                <?php if ($c['foto_mascota']): ?>
+                                    <img src="<?php echo $c['foto_mascota']; ?>" alt="<?php echo htmlspecialchars($c['nombre_mascota']); ?>">
+                                <?php else: ?>
+                                    <i class="fas fa-dog"></i>
+                                <?php endif; ?>
+                            </div>
+                            <div class="agenda-item-info">
+                                <h4><?php echo htmlspecialchars($c['nombre_mascota']); ?></h4>
+                                <p class="agenda-item-type"><?php echo htmlspecialchars($c['nombre_tipo'] ?? 'Consulta'); ?> · <?php echo htmlspecialchars($c['nombre_completo'] ?? 'Veterinario'); ?></p>
+                                <span class="agenda-item-date"><?php echo date('d/m/Y', strtotime($c['fecha'])); ?> · <?php echo substr($c['hora'], 0, 5); ?></span>
+                            </div>
+                            <div class="agenda-item-actions">
+                                <?php if ($c['estado'] === 'programada'): ?>
+                                    <span class="status-badge status-active">Activa</span>
+                                    <button type="button" class="btn-cancel-agenda" data-id="<?php echo (int)$c['id_cita']; ?>">Cancelar</button>
+                                <?php else: ?>
+                                    <span class="status-badge status-inactive"><?php echo htmlspecialchars($c['estado']); ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Contenedor 2: Calendario de Salud -->
+        <div id="agenda-salud" class="agenda-tab-content">
+            <?php 
+            $cronologia_salud = [];
+            if (is_array($todas_vacunas)) {
+                foreach ($todas_vacunas as $v) {
+                    $cronologia_salud[] = [
+                        'tipo' => 'vacuna',
+                        'nombre_mascota' => $v['nombre_mascota'],
+                        'foto_mascota' => $v['foto_mascota'],
+                        'titulo' => $v['nombre_vacuna'],
+                        'detalle' => 'Dosis: ' . $v['dosis'],
+                        'fecha' => $v['fecha_aplicacion'],
+                        'proxima' => ($v['fecha_proxima'] !== '0000-00-00') ? $v['fecha_proxima'] : null
+                    ];
+                }
+            }
+            if (is_array($todas_desparasitaciones)) {
+                foreach ($todas_desparasitaciones as $d) {
+                    $cronologia_salud[] = [
+                        'tipo' => 'control',
+                        'nombre_mascota' => $d['nombre_mascota'],
+                        'foto_mascota' => $d['foto_mascota'],
+                        'titulo' => $d['producto'],
+                        'detalle' => 'Dosis: ' . $d['dosis'],
+                        'fecha' => $d['fecha_aplicacion'],
+                        'proxima' => ($d['fecha_proxima'] !== '0000-00-00') ? $d['fecha_proxima'] : null
+                    ];
+                }
+            }
+            usort($cronologia_salud, function($a, $b) {
+                return strtotime($b['fecha']) - strtotime($a['fecha']);
+            });
+            ?>
+
+            <?php if (empty($cronologia_salud)): ?>
+                <div class="agenda-empty-state">
+                    <i class="ri-heart-pulse-line"></i>
+                    <p>No tienes registros de vacunas o controles.</p>
+                </div>
+            <?php else: ?>
+                <div class="agenda-list scrollable-list">
+                    <?php foreach ($cronologia_salud as $item): ?>
+                        <div class="agenda-list-item">
+                            <div class="agenda-icon-wrap <?php echo $item['tipo'] === 'vacuna' ? 'bg-vacuna' : 'bg-control'; ?>">
+                                <i class="<?php echo $item['tipo'] === 'vacuna' ? 'ri-syringe-line' : 'ri-capsule-line'; ?>"></i>
+                            </div>
+                            <div class="agenda-item-info">
+                                <h4><?php echo htmlspecialchars($item['nombre_mascota']); ?></h4>
+                                <p class="agenda-item-type"><?php echo htmlspecialchars($item['titulo']); ?> · <?php echo htmlspecialchars($item['detalle']); ?></p>
+                                <span class="agenda-item-date"><?php echo $item['tipo'] === 'vacuna' ? 'Vacuna aplicada' : 'Control realizado'; ?>: <?php echo date('d/m/Y', strtotime($item['fecha'])); ?></span>
+                            </div>
+                            <?php if ($item['proxima']): ?>
+                                <div class="agenda-item-next">
+                                    <span class="next-label">Próxima</span>
+                                    <span class="next-date"><?php echo date('d/m/Y', strtotime($item['proxima'])); ?></span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
 <!-- ══ SCREEN: RECORDATORIOS (NOTIFICATIONS) ════════════════════════ -->
 <div id="screen-notifications" class="app-screen">
     <div class="section-title-row">

@@ -71,6 +71,45 @@ class CitaController {
                 exit;
             }
 
+            // 1. Verificar disponibilidad de la mascota (evitar que la misma mascota tenga citas simultáneas / solapadas) - BLOQUEO DIRECTO
+            if (!$this->model->checkMascotaDisponible($data['id_mascota'], $data['fecha'], $data['hora'], $data['duracion_minutos'])) {
+                echo json_encode(['success' => false, 'message' => 'La mascota ya tiene una consulta programada que se solapa con este horario. Por favor, elige otra hora.']);
+                exit;
+            }
+
+            // Validar si la mascota ya tiene otra cita activa programada para el mismo día
+            $ignore_warning = $_POST['ignore_warning'] ?? '0';
+            if ($ignore_warning !== '1' && !empty($data['id_mascota']) && !empty($data['fecha'])) {
+                $queryCitaHoy = "SELECT hora FROM citas 
+                                 WHERE id_mascota = :id_mascota 
+                                 AND fecha = :fecha 
+                                 AND estado != 'cancelada' 
+                                 LIMIT 1";
+                $stmtCitaHoy = $this->db->prepare($queryCitaHoy);
+                $stmtCitaHoy->execute([
+                    ':id_mascota' => $data['id_mascota'],
+                    ':fecha' => $data['fecha']
+                ]);
+                $citaHoy = $stmtCitaHoy->fetch(PDO::FETCH_ASSOC);
+                
+                if ($citaHoy) {
+                    // Obtener nombre de la mascota
+                    $queryMascota = "SELECT nombre FROM mascotas WHERE id_mascota = :id_mascota";
+                    $stmtMascota = $this->db->prepare($queryMascota);
+                    $stmtMascota->execute([':id_mascota' => $data['id_mascota']]);
+                    $pet = $stmtMascota->fetch(PDO::FETCH_ASSOC);
+                    $petName = $pet ? $pet['nombre'] : 'la mascota';
+                    
+                    $horaCita = date('h:i A', strtotime($citaHoy['hora']));
+                    echo json_encode([
+                        'success' => false,
+                        'has_warning' => true,
+                        'message' => "La mascota {$petName} ya tiene una cita programada hoy a las {$horaCita}. ¿Desea continuar?"
+                    ]);
+                    exit;
+                }
+            }
+
             // 0. Validar horario laboral configurado
             require_once __DIR__ . '/HorarioClinicaController.php';
             $horarioController = new HorarioClinicaController();
@@ -687,7 +726,6 @@ class CitaController {
     }
 
     private function enviarEmailConfirmacion($id_mascota, $doc_vet, $fecha, $hora) {
-        // Obtener datos del propietario y mascota
         $query = "SELECT m.nombre as mascota, u.nombre_completo as propietario, u.email, v.nombre_completo as veterinario 
                   FROM mascotas m 
                   JOIN usuarios u ON m.doc_propietario = u.documento
@@ -701,8 +739,39 @@ class CitaController {
             return false;
         }
 
-        return $this->mandarPHPMailer($info['email'], $info['propietario'], 'Confirmación de Cita Veterinaria - Zooki', 
-            $this->generarCuerpoEmail('¡Cita Confirmada!', $info, $fecha, $hora, '#10B981'));
+        require_once __DIR__ . '/../config/EmailService.php';
+        $emailService = new EmailService();
+
+        $envFile = __DIR__ . '/../.env';
+        $appUrl = 'https://zooki.secarvajal.com/index.php';
+        if (file_exists($envFile)) {
+            $env = parse_ini_file($envFile);
+            if (isset($env['APP_URL'])) {
+                $appUrl = rtrim($env['APP_URL'], '/') . '/index.php';
+            }
+        }
+
+        $fechaFormateada = date('d/m/Y', strtotime($fecha));
+        
+        $contenido = '
+        <p style="font-size:15px;line-height:22px;color:#454545;margin:0 0 16px 0;">
+          Queremos confirmarte que la cita para tu mascota ha sido programada con éxito.
+        </p>
+        
+        <div style="background-color:#f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 24px 0;">
+            <p style="margin: 0 0 8px 0; font-size: 15px; color: #1d1c1d;"><strong>Mascota:</strong> ' . htmlspecialchars($info['mascota']) . '</p>
+            <p style="margin: 0 0 8px 0; font-size: 15px; color: #1d1c1d;"><strong>Fecha:</strong> ' . $fechaFormateada . '</p>
+            <p style="margin: 0 0 8px 0; font-size: 15px; color: #1d1c1d;"><strong>Hora:</strong> ' . htmlspecialchars($hora) . '</p>
+            <p style="margin: 0; font-size: 15px; color: #1d1c1d;"><strong>Veterinario:</strong> Dr(a). ' . htmlspecialchars($info['veterinario']) . '</p>
+        </div>
+        
+        <p style="font-size:15px;line-height:22px;color:#454545;margin:0 0 16px 0;">
+          Te esperamos puntual para brindar el mejor cuidado a tu mascota.
+        </p>';
+
+        $cuerpoHTML = $emailService->obtenerPlantillaBaseHTML($info['propietario'], '¡Cita Confirmada!', $contenido, 'Ver en mi Portal', $appUrl);
+
+        return $emailService->enviarCorreoPersonalizado($info['email'], $info['propietario'], 'Confirmación de Cita Veterinaria - Zooki', $cuerpoHTML);
     }
 
     private function enviarEmailNotificacion($id_cita, $tipo) {
@@ -715,61 +784,58 @@ class CitaController {
             'veterinario' => $cita['veterinario_nombre']
         ];
 
+        require_once __DIR__ . '/../config/EmailService.php';
+        $emailService = new EmailService();
+
+        $envFile = __DIR__ . '/../.env';
+        $appUrl = 'https://zooki.secarvajal.com/index.php';
+        if (file_exists($envFile)) {
+            $env = parse_ini_file($envFile);
+            if (isset($env['APP_URL'])) {
+                $appUrl = rtrim($env['APP_URL'], '/') . '/index.php';
+            }
+        }
+
+        $fechaFormateada = date('d/m/Y', strtotime($cita['fecha']));
+        $titulo = '';
+        $asunto = '';
+
         if ($tipo === 'reprogramacion') {
-            return $this->mandarPHPMailer($cita['email'], $info['propietario'], 'Actualización de Cita Veterinaria - Zooki',
-                $this->generarCuerpoEmail('Tu cita ha sido reprogramada 🕒', $info, $cita['fecha'], $cita['hora'], '#F59E0B'));
+            $titulo = 'Tu cita ha sido reprogramada';
+            $asunto = 'Actualización de Cita Veterinaria - Zooki';
+            $mensaje = 'Te informamos que tu cita ha sido reprogramada con los siguientes detalles:';
         } else if ($tipo === 'confirmacion') {
-            return $this->mandarPHPMailer($cita['email'], $info['propietario'], 'Confirmación de Cita - Zooki',
-                $this->generarCuerpoEmail('Tu cita ha sido confirmada ✅', $info, $cita['fecha'], $cita['hora'], '#10B981'));
-        } else {
-            return $this->mandarPHPMailer($cita['email'], $info['propietario'], 'Cancelación de Cita Veterinaria - Zooki',
-                $this->generarCuerpoEmail('Tu cita ha sido cancelada ❌', $info, $cita['fecha'], $cita['hora'], '#EF4444', 'La cita programada ha sido cancelada. Por favor, contáctanos si deseas reprogramarla.'));
+            $titulo = 'Tu cita ha sido confirmada';
+            $asunto = 'Confirmación de Cita - Zooki';
+            $mensaje = 'Te confirmamos los detalles finales de tu cita programada:';
+        } else { // cancelacion
+            $titulo = 'Tu cita ha sido cancelada';
+            $asunto = 'Cancelación de Cita Veterinaria - Zooki';
+            $mensaje = 'Te informamos que la cita programada ha sido cancelada. Por favor, contáctanos si deseas reprogramarla.';
         }
-    }
 
-    private function generarCuerpoEmail($titulo, $info, $fecha, $hora, $colorBorde, $mensajeExtra = "Te esperamos puntual para brindar el mejor cuidado a tu mascota.") {
-        return "
-        <div style='font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;'>
-            <div style='background-color: #0f172a; padding: 20px; text-align: center; color: white;'>
-                <h2>Zooki - $titulo</h2>
-            </div>
-            <div style='padding: 20px;'>
-                <p>Hola <strong>{$info['propietario']}</strong>,</p>
-                <p>Detalles sobre la cita para <strong>{$info['mascota']}</strong>:</p>
-                
-                <div style='background-color: #f8fafc; padding: 15px; border-left: 4px solid $colorBorde; margin: 20px 0;'>
-                    <p style='margin: 5px 0;'><strong>Fecha:</strong> " . date('d/m/Y', strtotime($fecha)) . "</p>
-                    <p style='margin: 5px 0;'><strong>Hora:</strong> $hora</p>
-                    <p style='margin: 5px 0;'><strong>Veterinario:</strong> Dr(a). {$info['veterinario']}</p>
-                </div>
-                
-                <p>$mensajeExtra</p>
-            </div>
-        </div>";
-    }
+        $contenido = '
+        <p style="font-size:15px;line-height:22px;color:#454545;margin:0 0 16px 0;">
+          ' . $mensaje . '
+        </p>
+        
+        <div style="background-color:#f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 24px 0;">
+            <p style="margin: 0 0 8px 0; font-size: 15px; color: #1d1c1d;"><strong>Mascota:</strong> ' . htmlspecialchars($info['mascota']) . '</p>
+            <p style="margin: 0 0 8px 0; font-size: 15px; color: #1d1c1d;"><strong>Fecha:</strong> ' . $fechaFormateada . '</p>
+            <p style="margin: 0 0 8px 0; font-size: 15px; color: #1d1c1d;"><strong>Hora:</strong> ' . htmlspecialchars($cita['hora']) . '</p>
+            <p style="margin: 0; font-size: 15px; color: #1d1c1d;"><strong>Veterinario:</strong> Dr(a). ' . htmlspecialchars($info['veterinario']) . '</p>
+        </div>';
 
-    private function mandarPHPMailer($dest_email, $dest_nombre, $asunto, $cuerpo) {
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'zooki.vet@gmail.com';
-            $mail->Password   = 'rpnccdwtrglvukff';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
-            $mail->CharSet    = 'UTF-8';
-
-            $mail->setFrom('no-reply@zooki.com', 'Clínica Veterinaria Zooki');
-            $mail->addAddress($dest_email, $dest_nombre);
-            $mail->isHTML(true);
-            $mail->Subject = $asunto;
-            $mail->Body = $cuerpo;
-            $mail->send();
-            return true;
-        } catch (Exception $e) {
-            return false;
+        if ($tipo !== 'cancelacion') {
+            $contenido .= '
+            <p style="font-size:15px;line-height:22px;color:#454545;margin:0 0 16px 0;">
+              Te esperamos puntual para brindar el mejor cuidado a tu mascota.
+            </p>';
         }
+
+        $cuerpoHTML = $emailService->obtenerPlantillaBaseHTML($info['propietario'], $titulo, $contenido, 'Ver en mi Portal', $appUrl);
+
+        return $emailService->enviarCorreoPersonalizado($cita['email'], $info['propietario'], $asunto, $cuerpoHTML);
     }
 
     public function listarTodasCitasAjax() {
