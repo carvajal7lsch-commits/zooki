@@ -79,6 +79,46 @@ class Cita {
 
         return true;
     }
+
+    public function checkMascotaDisponible($id_mascota, $fecha, $hora, $duracion_minutos = 0, $id_cita_excluir = null) {
+        $nueva_inicio = strtotime(date('Y-m-d') . ' ' . $hora);
+        $nueva_fin    = $nueva_inicio + (max((int)$duracion_minutos, 1) * 60);
+
+        $query = "SELECT hora, hora_fin, duracion_minutos FROM " . $this->table_name . "
+                  WHERE id_mascota = :id_mascota
+                  AND fecha = :fecha
+                  AND estado != 'cancelada'";
+
+        if ($id_cita_excluir) {
+            $query .= " AND id_cita != :id_cita_excluir";
+        }
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_mascota', $id_mascota);
+        $stmt->bindParam(':fecha', $fecha);
+        if ($id_cita_excluir) {
+            $stmt->bindParam(':id_cita_excluir', $id_cita_excluir);
+        }
+        $stmt->execute();
+        $citas_existentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($citas_existentes as $cita) {
+            $cita_inicio_ts = strtotime(date('Y-m-d') . ' ' . $cita['hora']);
+
+            if ($cita['hora_fin']) {
+                $cita_fin_ts = strtotime(date('Y-m-d') . ' ' . $cita['hora_fin']);
+            } else {
+                $dur = !empty($cita['duracion_minutos']) ? (int)$cita['duracion_minutos'] : 30;
+                $cita_fin_ts = $cita_inicio_ts + ($dur * 60);
+            }
+
+            // Solapamiento: nueva_inicio < cita_fin  AND  nueva_fin > cita_inicio
+            if ($nueva_inicio < $cita_fin_ts && $nueva_fin > $cita_inicio_ts) {
+                return false; // Conflicto de horario para la misma mascota
+            }
+        }
+        return true;
+    }
     
     public function getTiposCita() {
         $query = "SELECT * FROM tipos_cita WHERE activo = 1 ORDER BY duracion_minutos ASC";
@@ -90,6 +130,7 @@ class Cita {
             return [
                 'id_tipo_cita' => $tipo['id_tipo_cita'],
                 'nombre' => $tipo['nombre_tipo'] ?? $tipo['nombre'] ?? '',
+                'nombre_tipo' => $tipo['nombre_tipo'] ?? $tipo['nombre'] ?? '',
                 'duracion_minutos' => $tipo['duracion_minutos'],
                 'activo' => $tipo['activo']
             ];

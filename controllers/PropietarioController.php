@@ -87,6 +87,54 @@ class PropietarioController {
         }
         unset($m);
 
+        // Obtener todas las citas, vacunas y desparasitaciones de todas las mascotas
+        $todas_citas = [];
+        $todas_vacunas = [];
+        $todas_desparasitaciones = [];
+        foreach ($mascotas as $m) {
+            $citasMascota = $this->citaModel->getByMascota($m['id_mascota']);
+            if (is_array($citasMascota)) {
+                foreach ($citasMascota as $c) {
+                    $c['nombre_mascota'] = $m['nombre'];
+                    $c['foto_mascota'] = $m['url_foto'] ? 'uploads/mascotas/' . htmlspecialchars($m['url_foto']) : null;
+                    $todas_citas[] = $c;
+                }
+            }
+
+            $vacunasMascota = $this->vacunaModel->findByMascota($m['id_mascota']);
+            if (is_array($vacunasMascota)) {
+                foreach ($vacunasMascota as $v) {
+                    $v['nombre_mascota'] = $m['nombre'];
+                    $v['foto_mascota'] = $m['url_foto'] ? 'uploads/mascotas/' . htmlspecialchars($m['url_foto']) : null;
+                    $todas_vacunas[] = $v;
+                }
+            }
+
+            $desparasitacionesMascota = $this->desparasitacionModel->findByMascota($m['id_mascota']);
+            if (is_array($desparasitacionesMascota)) {
+                foreach ($desparasitacionesMascota as $d) {
+                    $d['nombre_mascota'] = $m['nombre'];
+                    $d['foto_mascota'] = $m['url_foto'] ? 'uploads/mascotas/' . htmlspecialchars($m['url_foto']) : null;
+                    $todas_desparasitaciones[] = $d;
+                }
+            }
+        }
+
+        // Ordenar todas las citas por fecha/hora descendente
+        usort($todas_citas, function($a, $b) {
+            return strtotime($b['fecha'] . ' ' . $b['hora']) - strtotime($a['fecha'] . ' ' . $a['hora']);
+        });
+
+        // Ordenar todas las vacunas por fecha descendente
+        usort($todas_vacunas, function($a, $b) {
+            return strtotime($b['fecha_aplicacion']) - strtotime($a['fecha_aplicacion']);
+        });
+
+        // Ordenar todas las desparasitaciones por fecha descendente
+        usort($todas_desparasitaciones, function($a, $b) {
+            return strtotime($b['fecha_aplicacion']) - strtotime($a['fecha_aplicacion']);
+        });
+
         $nombre = $_SESSION['usuario_nombre'] ?? 'Propietario';
         $primer_nombre = explode(' ', trim($nombre))[0];
         

@@ -582,7 +582,6 @@ function openModal(modalId) {
     if (drawer) drawer.classList.add('is-open');
     document.body.style.overflow = 'hidden';
 }
-
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
@@ -597,8 +596,203 @@ function closeModal(modalId) {
     }, 300);
 }
 
+// Función para cambiar de pestaña en el panel "Mi Agenda de Salud" del Home
+function switchAgendaTab(tabId, btn) {
+    // Ocultar todos los contenidos
+    document.querySelectorAll('.agenda-tab-content').forEach(el => {
+        el.style.display = 'none';
+    });
+    // Mostrar el seleccionado
+    const target = document.getElementById(tabId);
+    if (target) target.style.display = 'block';
+
+    // Desactivar todos los botones
+    document.querySelectorAll('.agenda-tab-btn').forEach(b => {
+        b.style.background = 'transparent';
+        b.style.color = 'var(--z-text-muted)';
+        b.style.boxShadow = 'none';
+    });
+
+    // Activar el botón seleccionado
+    if (btn) {
+        btn.style.background = '#ffffff';
+        btn.style.color = 'var(--z-primary)';
+        btn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
+    }
+}
+
+// Función para mostrar modales tipo Bottom Sheet minimalistas (Estilo Tik Tok) en el Portal
+function showTikTokModal({ title, message, isConfirm, onConfirm, onCancel }) {
+    const existing = document.getElementById('tiktok-micro-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'tiktok-micro-modal';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        z-index: 100000;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    `;
+
+    const container = document.createElement('div');
+    container.style.cssText = `
+        background: #ffffff;
+        width: 100%;
+        max-width: 480px;
+        border-radius: 28px 28px 0 0;
+        padding: 1.25rem 1.5rem 2.25rem;
+        box-sizing: border-box;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+        text-align: center;
+        box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+    `;
+
+    // Barra superior decorativa del Drawer
+    const handle = document.createElement('div');
+    handle.style.cssText = `
+        width: 36px;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+        margin: 0 auto 1.25rem;
+    `;
+    container.appendChild(handle);
+
+    if (title) {
+        const titleEl = document.createElement('h4');
+        titleEl.textContent = title;
+        titleEl.style.cssText = `
+            margin: 0 0 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0f172a;
+            font-family: inherit;
+        `;
+        container.appendChild(titleEl);
+    }
+
+    if (message) {
+        const msgEl = document.createElement('p');
+        msgEl.textContent = message;
+        msgEl.style.cssText = `
+            margin: 0 0 1.5rem;
+            font-size: 0.88rem;
+            color: #64748b;
+            line-height: 1.45;
+            font-family: inherit;
+        `;
+        container.appendChild(msgEl);
+    }
+
+    const btnWrapper = document.createElement('div');
+    btnWrapper.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+    `;
+
+    const mainBtn = document.createElement('button');
+    mainBtn.textContent = isConfirm ? 'Sí, continuar' : 'Entendido';
+    mainBtn.style.cssText = `
+        width: 100%;
+        background: linear-gradient(135deg, var(--z-primary) 0%, var(--z-primary-dark) 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 14px;
+        padding: 0.85rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        outline: none;
+        box-shadow: 0 4px 12px rgba(0, 82, 255, 0.15);
+        font-family: inherit;
+    `;
+    mainBtn.onclick = () => {
+        close();
+        if (onConfirm) onConfirm();
+    };
+    btnWrapper.appendChild(mainBtn);
+
+    if (isConfirm) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'No, cancelar';
+        cancelBtn.style.cssText = `
+            width: 100%;
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            border-radius: 14px;
+            padding: 0.85rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+            font-family: inherit;
+        `;
+        cancelBtn.onclick = () => {
+            close();
+            if (onCancel) onCancel();
+        };
+        btnWrapper.appendChild(cancelBtn);
+    }
+
+    container.appendChild(btnWrapper);
+    overlay.appendChild(container);
+    document.body.appendChild(overlay);
+
+    // Animar entrada
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+    }, 15);
+
+    const close = () => {
+        overlay.style.opacity = '0';
+        container.style.transform = 'translateY(100%)';
+        setTimeout(() => overlay.remove(), 250);
+    };
+}
+
 /* Lógica de Agendamiento desde el Portal (HU-26) */
 document.addEventListener('DOMContentLoaded', () => {
+    // Registración de navegación de Agenda
+    const navAgenda = document.getElementById('nav-agenda');
+    if (navAgenda) {
+        navAgenda.addEventListener('click', () => {
+            switchTab('agenda');
+        });
+    }
+
+    const btnAgendaCitas = document.getElementById('btn-agenda-citas');
+    const btnAgendaSalud = document.getElementById('btn-agenda-salud');
+    if (btnAgendaCitas && btnAgendaSalud) {
+        btnAgendaCitas.addEventListener('click', () => {
+            switchAgendaTab('agenda-citas', btnAgendaCitas);
+        });
+        btnAgendaSalud.addEventListener('click', () => {
+            switchAgendaTab('agenda-salud', btnAgendaSalud);
+        });
+    }
+
+    // Attach cancellation event listeners to all cancel buttons in the Agenda
+    document.querySelectorAll('.btn-cancel-agenda').forEach(btn => {
+        btn.addEventListener('click', () => {
+            cancelarCitaPortal(btn.dataset.id);
+        });
+    });
+
     // Al iniciar, cargar el contador de notificaciones de la campana
     loadPortalAlerts();
 
@@ -902,15 +1096,18 @@ document.addEventListener('DOMContentLoaded', () => {
     tipoCitaSelect.addEventListener('change', cargarHoras);
 
     // Procesar formulario
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
 
+    // Procesar formulario
+    const enviarFormulario = async (ignoreWarning = false) => {
         const submitBtn = form.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         submitBtn.querySelector('span').textContent = 'Agendando...';
 
         try {
             const fd = new FormData(form);
+            if (ignoreWarning) {
+                fd.append('ignore_warning', '1');
+            }
             const res = await (await fetch('index.php?action=portal_agendar_cita_ajax', {
                 method: 'POST',
                 body: fd,
@@ -931,90 +1128,102 @@ document.addEventListener('DOMContentLoaded', () => {
                     }).catch(console.error);
                 }
 
-                Swal.fire({
-                    icon: 'success',
+                showTikTokModal({
                     title: '¡Cita Reservada!',
-                    text: res.message || 'Tu cita ha sido agendada y confirmada con éxito.',
-                    confirmButtonColor: '#5560FF'
-                }).then(() => {
-                    location.reload();
+                    message: res.message || 'Tu cita ha sido agendada y confirmada con éxito.',
+                    isConfirm: false,
+                    onConfirm: () => {
+                        location.reload();
+                    }
+                });
+            } else if (res.has_warning) {
+                showTikTokModal({
+                    title: 'Cita Duplicada',
+                    message: res.message,
+                    isConfirm: true,
+                    onConfirm: () => {
+                        enviarFormulario(true); // Re-submit ignoring warning
+                    },
+                    onCancel: () => {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Confirmar Cita';
+                    }
                 });
             } else {
-                Swal.fire({
-                    icon: 'error',
+                showTikTokModal({
                     title: 'No se pudo agendar',
-                    text: res.message || 'Inténtalo nuevamente.',
-                    confirmButtonColor: '#5560FF'
+                    message: res.message || 'Inténtalo nuevamente.',
+                    isConfirm: false,
+                    onConfirm: () => {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Confirmar Cita';
+                    }
                 });
-                submitBtn.disabled = false;
-                submitBtn.querySelector('span').textContent = 'Confirmar Cita';
             }
         } catch (error) {
             console.error('Error al agendar cita:', error);
-            Swal.fire({
-                icon: 'error',
+            showTikTokModal({
                 title: 'Error de Red',
-                text: 'No pudimos conectarnos con el servidor. Inténtalo más tarde.',
-                confirmButtonColor: '#5560FF'
+                message: 'No pudimos conectarnos con el servidor. Inténtalo más tarde.',
+                isConfirm: false,
+                onConfirm: () => {
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('span').textContent = 'Confirmar Cita';
+                }
             });
-            submitBtn.disabled = false;
-            submitBtn.querySelector('span').textContent = 'Confirmar Cita';
         }
+    };
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        enviarFormulario(false);
     });
 });
 
 /* Función para cancelar cita desde el portal (Propietario) */
-async function cancelarCitaPortal(idCita) {
-    const result = await Swal.fire({
+function cancelarCitaPortal(idCita) {
+    showTikTokModal({
         title: '¿Estás seguro?',
-        text: "Esta acción cancelará tu cita programada.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: 'Sí, cancelar cita',
-        cancelButtonText: 'No, mantener'
-    });
+        message: 'Esta acción cancelará tu cita programada de forma permanente.',
+        isConfirm: true,
+        onConfirm: async () => {
+            try {
+                const form = new FormData();
+                form.append('id_cita', idCita);
+                const res = await (await fetch('index.php?action=cancelar_cita_ajax', {
+                    method: 'POST',
+                    body: form,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })).json();
 
-    if (result.isConfirmed) {
-        try {
-            const form = new FormData();
-            form.append('id_cita', idCita);
-            const res = await (await fetch('index.php?action=cancelar_cita_ajax', {
-                method: 'POST',
-                body: form,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                if (res.success) {
+                    showTikTokModal({
+                        title: 'Cita cancelada',
+                        message: res.message || 'La cita ha sido cancelada.',
+                        isConfirm: false,
+                        onConfirm: () => {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    showTikTokModal({
+                        title: 'Error',
+                        message: res.message || 'No se pudo cancelar la cita.',
+                        isConfirm: false
+                    });
                 }
-            })).json();
-
-            if (res.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Cita cancelada',
-                    text: res.message || 'La cita ha sido cancelada.',
-                    confirmButtonColor: '#5560FF'
-                }).then(() => {
-                    location.reload();
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: res.message || 'No se pudo cancelar la cita.',
-                    confirmButtonColor: '#5560FF'
+            } catch (e) {
+                console.error(e);
+                showTikTokModal({
+                    title: 'Error de Red',
+                    message: 'No pudimos conectarnos con el servidor.',
+                    isConfirm: false
                 });
             }
-        } catch (e) {
-            console.error(e);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de Red',
-                text: 'No pudimos conectarnos con el servidor.',
-                confirmButtonColor: '#5560FF'
-            });
         }
-    }
+    });
 }
 
 /* --- Gestión de Mascotas desde el Portal (Registro y Edición) --- */

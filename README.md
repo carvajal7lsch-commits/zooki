@@ -4,7 +4,17 @@ Zooki es un sistema web moderno, robusto y eficiente diseñado para la gestión 
 
 ## Historial de Versiones
 
-### Versión 1.4.0 (Actual)
+### Versión 1.5.0 (Actual)
+Esta versión incluye optimizaciones mayores en el flujo de agendamiento y notificaciones de citas, la incorporación de interfaces móviles personalizadas nativas, y correcciones de adaptabilidad en vistas de autenticación.
+
+*   **Modales Estilo TikTok (Action Sheets):** Implementación de una interfaz de Bottom Sheet/Drawer nativa y fluida (`showTikTokModal`) para móviles en el portal del propietario. Reemplaza los modales de SweetAlert y alertas de navegador en la confirmación de citas, advertencias de duplicidad y cancelación de citas.
+*   **Reglas de Solapamiento Físico de Citas:** Bloqueo automático en el backend y frontend de citas simultáneas o solapadas para una misma mascota, permitiendo al mismo tiempo múltiples citas el mismo día en horas diferentes mediante una advertencia interactiva.
+*   **Mapeo de Tipos de Cita en Portal:** Corrección de la propiedad de nombre del tipo de cita (`nombre_tipo`) enviada por el endpoint AJAX para asegurar su visualización en el listado del portal del propietario.
+*   **Notificaciones de Citas Premium (Sin Emojis):** Migración de todos los correos del ciclo de vida de citas (confirmación, reprogramación y cancelación) a la plantilla unificada de `EmailService` con diseño limpio tipo Slack y sin emojis para un aspecto más formal.
+*   **Adaptabilidad en Registro Móvil:** Solución al bug de CSS Grid que hacía que los campos de registro se vieran reducidos o apiñuscados en móvil, forzando un diseño de 1 columna a partir de 1023px.
+*   **Compresión de Recursos de Email:** Reducción drástica del tamaño de las imágenes incrustadas CID para optimizar envíos y tiempo de carga (logotipo de 2.08 MB a 2.8 KB, ícono de 300 KB a 24 KB).
+
+### Versión 1.4.0
 Esta versión se enfoca en resolver fallas visuales de adaptabilidad móvil (responsive), optimizaciones críticas en la entrega y renderizado de correos electrónicos, y la mejora de la experiencia de usuario en la gestión de contraseñas.
 
 *   **Incrustación de Imágenes CID (Emailing):** Las imágenes del logotipo y del ícono de Zooki ahora se adjuntan directamente en el cuerpo del correo como imágenes incrustadas usando CID (`cid:zooki_icon_blue`, `cid:zooki_logotipo`). Esto garantiza la carga inmediata y evita el bloqueo de imágenes externas en gestores de correo como Gmail y Outlook.
@@ -60,6 +70,7 @@ Esta versión introduce una renovación completa del canal de comunicación por 
 *   **Seguridad de Contraseñas (Reset & Registro):** Incorporación del medidor de seguridad, bloqueo de submit inseguro y botón de ojo de visibilidad para contraseñas.
 *   **Corrección de Dobles Bordes y Padding:** Solución al error visual de herencia de inputs que producía un doble borde y recortaba la primera letra en las pantallas y modales de autenticación.
 *   **Conexión Tolerante a Fallos:** Optimización del tiempo de respuesta DNS en Windows para bases de datos locales y fallback inteligente de credenciales (Docker/XAMPP).
+
 
 ---
 
